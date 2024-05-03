@@ -1,12 +1,11 @@
-import { ListaDadosPessoais } from './../models/base';
+import { ListaDadosPessoais } from "./../models/base";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { Router } from "express";
-import {getConsulta, Simula} from '../../src/importedApi'
+import { getConsulta, Simula } from "../../src/importedApi";
 
 export const rout = Router();
 
 const prisma = new PrismaClient();
-
 
 // rout.post("/consult", async (req, res) => {
 //   const nb = req.body.nb
@@ -90,7 +89,7 @@ const prisma = new PrismaClient();
 //               nb: listaDados.nb,
 //             },
 //           });
-  
+
 //           await prisma.listaDadosBancario.update({
 //             where: {
 //               nb: nb,
@@ -104,7 +103,7 @@ const prisma = new PrismaClient();
 //               nb: listaDados.nb,
 //             },
 //           });
-  
+
 //           await prisma.listaRMC.update({
 //             where: {
 //               nb: nb,
@@ -121,7 +120,7 @@ const prisma = new PrismaClient();
 //               nb: listaDados.nb,
 //             },
 //           });
-  
+
 //           await prisma.listaEmprestimo.update({
 //             where: {
 //               nb: nb,
@@ -159,17 +158,17 @@ const prisma = new PrismaClient();
 //   }
 // });
 
-rout.get("/consult/:nb", async (req, res) =>  {
+rout.get("/consult/:nb", async (req, res) => {
   const body = req.params.nb;
-  const nby = parseInt(body);
-  
+  const nby = parseFloat(body);
+
   if (body) {
     const dadosIsInDatabase = await prisma.dadosPessoais.findUnique({
       where: {
         nb: nby,
       },
     });
-    
+
     if (!dadosIsInDatabase) {
       const simul = await Simula();
       const listaDados = simul.listaDadosPessoais;
@@ -178,54 +177,48 @@ rout.get("/consult/:nb", async (req, res) =>  {
       const listaRmc = simul.listaRMC;
       const listaEmprestimos = simul.listaEmprestimos;
 
-     
-        const convertedCpf = parseInt(listaDados.cpf);
-        await prisma.dadosPessoais.create({
-          data: {
-            nb:  nby,
-            cpf: convertedCpf,
-            ddb: listaDados.ddb,
-            nome: listaDados.nome,
-            dt_nascimento: listaDados.dt_nascimento,
-            sexo: listaDados.sexo,
-          },
-        });
-      
+      const convertedCpf = parseInt(listaDados.cpf);
+      await prisma.dadosPessoais.create({
+        data: {
+          nb: nby,
+          cpf: convertedCpf,
+          ddb: listaDados.ddb,
+          nome: listaDados.nome,
+          dt_nascimento: listaDados.dt_nascimento,
+          sexo: listaDados.sexo,
+        },
+      });
 
-     
-        await prisma.listaDadosBeneficio.create({
-          data: {
-            beneficio: listaBeneficio.beneficio,
-            especie: listaBeneficio.especie,
-            situacao: listaBeneficio.situacao,
-            pensao: listaBeneficio.pensao,
-            representanteLegal: listaBeneficio.representanteLegal,
-            possuiProcurador: listaBeneficio.possuiProcurador,
-            elegivel: listaBeneficio.elegivel,
-            bloqueioEmprestimo: listaBeneficio.bloqueioEmprestimo,
-            valorMargemDisponivelRCC: listaBeneficio.valorMargemDisponivelRCC,
-            valorMargemConsignavelEmp: listaBeneficio.valorMargemConsignavelEmp,
-            valorMargemDisponivelEmp: listaBeneficio.valorMargemDisponivelEmp,
-            valorMargemUtilizadaEmp: listaBeneficio.valorMargemUtilizadaEmp,
-            valorMargemDisponivelRMC: listaBeneficio.valorMargemDisponivelRMC,
-            basedeCalculo: listaBeneficio.basedeCalculo,
-            nb: nby,
-          },
-        });
-      
+      await prisma.listaDadosBeneficio.create({
+        data: {
+          beneficio: listaBeneficio.beneficio,
+          especie: listaBeneficio.especie,
+          situacao: listaBeneficio.situacao,
+          pensao: listaBeneficio.pensao,
+          representanteLegal: listaBeneficio.representanteLegal,
+          possuiProcurador: listaBeneficio.possuiProcurador,
+          elegivel: listaBeneficio.elegivel,
+          bloqueioEmprestimo: listaBeneficio.bloqueioEmprestimo,
+          valorMargemDisponivelRCC: listaBeneficio.valorMargemDisponivelRCC,
+          valorMargemConsignavelEmp: listaBeneficio.valorMargemConsignavelEmp,
+          valorMargemDisponivelEmp: listaBeneficio.valorMargemDisponivelEmp,
+          valorMargemUtilizadaEmp: listaBeneficio.valorMargemUtilizadaEmp,
+          valorMargemDisponivelRMC: listaBeneficio.valorMargemDisponivelRMC,
+          basedeCalculo: listaBeneficio.basedeCalculo,
+          nb: nby,
+        },
+      });
 
-      
-        await prisma.listaDadosBancario.create({
-          data: {
-            nomeBanco: listaDadoBank.nomeBanco,
-            codigoBanco: listaDadoBank.codigoBanco,
-            agencia: listaDadoBank.agencia,
-            cc: listaDadoBank.cc,
-            tipoMeioPagamento: listaDadoBank.tipoMeioPagamento,
-            nb: nby,
-          },
-        });
-     
+      await prisma.listaDadosBancario.create({
+        data: {
+          nomeBanco: listaDadoBank.nomeBanco,
+          codigoBanco: listaDadoBank.codigoBanco,
+          agencia: listaDadoBank.agencia,
+          cc: listaDadoBank.cc,
+          tipoMeioPagamento: listaDadoBank.tipoMeioPagamento,
+          nb: nby,
+        },
+      });
 
       for (const rmc of listaRmc) {
         await prisma.listaRMC.create({
@@ -264,7 +257,7 @@ rout.get("/consult/:nb", async (req, res) =>  {
         });
       }
 
-      console.log("Criado")
+      console.log("Criado");
       const dadosPessoais = await prisma.dadosPessoais.findUnique({
         where: {
           nb: nby,
@@ -291,10 +284,15 @@ rout.get("/consult/:nb", async (req, res) =>  {
         },
       });
 
-    
-      res.send({ dadosPessoais, dadosBancarios, dadosBeneficio, emprestimos, rmc });
+      res.send({
+        dadosPessoais,
+        dadosBancarios,
+        dadosBeneficio,
+        emprestimos,
+        rmc,
+      });
 
-      res.send({})
+      res.send({});
     } else {
       // Se os dados já existem no banco de dados
       const latest = new Date(dadosIsInDatabase.date);
@@ -315,48 +313,45 @@ rout.get("/consult/:nb", async (req, res) =>  {
         const listaRmc = simul.listaRMC;
         const listaEmprestimos = simul.listaEmprestimos;
 
-       
-          const convertedCpf = parseInt(listaDados.cpf);
-          await prisma.dadosPessoais.update({
-            where: {
-              nb: nby,
-            },
-            data: {
-              nb: listaDados.nb,
-              cpf: convertedCpf,
-              ddb: listaDados.ddb,
-              nome: listaDados.nome,
-              dt_nascimento: listaDados.dt_nascimento,
-              sexo: listaDados.sexo,
-              date: new Date(),
-            },
-          });
-        
+        const convertedCpf = parseInt(listaDados.cpf);
+        await prisma.dadosPessoais.update({
+          where: {
+            nb: nby,
+          },
+          data: {
+            nb: listaDados.nb,
+            cpf: convertedCpf,
+            ddb: listaDados.ddb,
+            nome: listaDados.nome,
+            dt_nascimento: listaDados.dt_nascimento,
+            sexo: listaDados.sexo,
+            date: new Date(),
+          },
+        });
 
-       
-          await prisma.listaDadosBeneficio.update({
-            where: {
-              nb: nby,
-            },
-            data: {
-              beneficio: listaBeneficio.beneficio,
-              especie: listaBeneficio.especie,
-              situacao: listaBeneficio.situacao,
-              pensao: listaBeneficio.pensao,
-              representanteLegal: listaBeneficio.representanteLegal,
-              possuiProcurador: listaBeneficio.possuiProcurador,
-              elegivel: listaBeneficio.elegivel,
-              bloqueioEmprestimo: listaBeneficio.bloqueioEmprestimo,
-              valorMargemDisponivelRCC: listaBeneficio.valorMargemDisponivelRCC,
-              valorMargemConsignavelEmp: listaBeneficio.valorMargemConsignavelEmp,
-              valorMargemDisponivelEmp: listaBeneficio.valorMargemDisponivelEmp,
-              valorMargemUtilizadaEmp: listaBeneficio.valorMargemUtilizadaEmp,
-              valorMargemDisponivelRMC: listaBeneficio.valorMargemDisponivelRMC,
-              basedeCalculo: listaBeneficio.basedeCalculo,
-              nb: listaBeneficio.nb,
-            },
-          });
-        
+        await prisma.listaDadosBeneficio.update({
+          where: {
+            nb: nby,
+          },
+          data: {
+            beneficio: listaBeneficio.beneficio,
+            especie: listaBeneficio.especie,
+            situacao: listaBeneficio.situacao,
+            pensao: listaBeneficio.pensao,
+            representanteLegal: listaBeneficio.representanteLegal,
+            possuiProcurador: listaBeneficio.possuiProcurador,
+            elegivel: listaBeneficio.elegivel,
+            bloqueioEmprestimo: listaBeneficio.bloqueioEmprestimo,
+            valorMargemDisponivelRCC: listaBeneficio.valorMargemDisponivelRCC,
+            valorMargemConsignavelEmp: listaBeneficio.valorMargemConsignavelEmp,
+            valorMargemDisponivelEmp: listaBeneficio.valorMargemDisponivelEmp,
+            valorMargemUtilizadaEmp: listaBeneficio.valorMargemUtilizadaEmp,
+            valorMargemDisponivelRMC: listaBeneficio.valorMargemDisponivelRMC,
+            basedeCalculo: listaBeneficio.basedeCalculo,
+            nb: listaBeneficio.nb,
+          },
+        });
+
         await prisma.listaDadosBancario.create({
           data: {
             nomeBanco: listaDadoBank.nomeBanco,
@@ -383,7 +378,7 @@ rout.get("/consult/:nb", async (req, res) =>  {
             },
           });
         }
-  
+
         for (const emprestimo of listaEmprestimos) {
           await prisma.listaEmprestimo.create({
             data: {
@@ -404,7 +399,7 @@ rout.get("/consult/:nb", async (req, res) =>  {
             },
           });
         }
-  
+
         const dadosPessoais = await prisma.dadosPessoais.findUnique({
           where: {
             nb: nby,
@@ -430,9 +425,14 @@ rout.get("/consult/:nb", async (req, res) =>  {
             nb: nby,
           },
         });
-  
-      
-        res.send({ dadosPessoais, dadosBancarios, dadosBeneficio, emprestimos, rmc });
+
+        res.send({
+          dadosPessoais,
+          dadosBancarios,
+          dadosBeneficio,
+          emprestimos,
+          rmc,
+        });
 
         console.log("Atualizado");
       }
@@ -462,126 +462,128 @@ rout.get("/consult/:nb", async (req, res) =>  {
         },
       });
 
-      res.send({ dadosPessoais, dadosBancarios, dadosBeneficio, emprestimos, rmc });
+      res.send({
+        dadosPessoais,
+        dadosBancarios,
+        dadosBeneficio,
+        emprestimos,
+        rmc,
+      });
       console.log("lido do banco");
     }
   }
 });
 
-
-rout.get('/teste', (req, res) => {
+rout.get("/teste", (req, res) => {
   res.send({
-    "listaDadosPessoais": {
-      "nb": 3232321,
-      "cpf": 9246264886,
-      "ddb": "2001-01-09",
-      "nome": "WANDERCY MARTINS DA CRUZ",
-      "dt_nascimento": "1953-11-05",
-      "sexo": "Feminino"
-  },
-  "listaDadosBeneficio": {
-      "beneficio": 1193267045,
-      "especie": "21 - PENSAO POR MORTE PREVIDENCIARIA",
-      "situacao": "ATIVO",
-      "pensao": false,
-      "representanteLegal": false,
-      "possuiProcurador": false,
-      "elegivel": true,
-      "bloqueioEmprestimo": false,
-      "valorMargemDisponivelRCC": 70.6,
-      "valorMargemConsignavelEmp": 494.2,
-      "valorMargemDisponivelEmp": 93.46,
-      "valorMargemUtilizadaEmp": 400.74,
-      "valorMargemDisponivelRMC": 0,
-      "basedeCalculo": 1412
-  },
-  "listaDadosBancario": {
-      "nomeBanco": "CAIXA ECONOMICA FEDERAL",
-      "codigoBanco": 104,
-      "agencia": "1006",
-      "cc": "9710793140",
-      "tipoMeioPagamento": "CONTA-CORRENTE"
-  },
-  "listaRMC": [
+    listaDadosPessoais: {
+      nb: 3232321,
+      cpf: 9246264886,
+      ddb: "2001-01-09",
+      nome: "WANDERCY MARTINS DA CRUZ",
+      dt_nascimento: "1953-11-05",
+      sexo: "Feminino",
+    },
+    listaDadosBeneficio: {
+      beneficio: 1193267045,
+      especie: "21 - PENSAO POR MORTE PREVIDENCIARIA",
+      situacao: "ATIVO",
+      pensao: false,
+      representanteLegal: false,
+      possuiProcurador: false,
+      elegivel: true,
+      bloqueioEmprestimo: false,
+      valorMargemDisponivelRCC: 70.6,
+      valorMargemConsignavelEmp: 494.2,
+      valorMargemDisponivelEmp: 93.46,
+      valorMargemUtilizadaEmp: 400.74,
+      valorMargemDisponivelRMC: 0,
+      basedeCalculo: 1412,
+    },
+    listaDadosBancario: {
+      nomeBanco: "CAIXA ECONOMICA FEDERAL",
+      codigoBanco: 104,
+      agencia: "1006",
+      cc: "9710793140",
+      tipoMeioPagamento: "CONTA-CORRENTE",
+    },
+    listaRMC: [
       {
-          "situacao": "ATIVA",
-          "nomeBanco": "BANCO BMG SA",
-          "valor": 54.9,
-          "codigoBanco": 318,
-          "dataInclusao": "01\/11\/2015",
-          "numeroEmprestimo": "11483685",
-          "limite": 1175,
-          "tipo emprestimo": 76
-      }
-  ],
-  "novos_RCC": [],
-  "listaEmprestimos": [
+        situacao: "ATIVA",
+        nomeBanco: "BANCO BMG SA",
+        valor: 54.9,
+        codigoBanco: 318,
+        dataInclusao: "01/11/2015",
+        numeroEmprestimo: "11483685",
+        limite: 1175,
+        "tipo emprestimo": 76,
+      },
+    ],
+    novos_RCC: [],
+    listaEmprestimos: [
       {
-          "nomeBanco": "QI SOCIEDADE DE CREDITO S.A.",
-          "codigoBanco": 329,
-          "dataAverbacao": "02\/02\/2023",
-          "numeroContrato": "0004033355WMD",
-          "valorEmprestado": 14616.84,
-          "valorLiberado": 6515.11,
-          "valorParcela": 174.01,
-          "qtdParcelas": 84,
-          "situacao": "ATIVA",
-          "qtdParcelasPagas": 14,
-          "competenciaInicio": "03\/2023",
-          "competenciaFim": "02\/2030",
-          "tipo_emprestimo": 98
+        nomeBanco: "QI SOCIEDADE DE CREDITO S.A.",
+        codigoBanco: 329,
+        dataAverbacao: "02/02/2023",
+        numeroContrato: "0004033355WMD",
+        valorEmprestado: 14616.84,
+        valorLiberado: 6515.11,
+        valorParcela: 174.01,
+        qtdParcelas: 84,
+        situacao: "ATIVA",
+        qtdParcelasPagas: 14,
+        competenciaInicio: "03/2023",
+        competenciaFim: "02/2030",
+        tipo_emprestimo: 98,
       },
       {
-          "nomeBanco": "CAIXA ECONOMICA FEDERAL",
-          "codigoBanco": 104,
-          "dataAverbacao": "22\/10\/2020",
-          "numeroContrato": "211006110001687465",
-          "valorEmprestado": 5646.08,
-          "valorLiberado": 4400,
-          "valorParcela": 88.22,
-          "qtdParcelas": 64,
-          "situacao": "ATIVA",
-          "qtdParcelasPagas": 42,
-          "competenciaInicio": "11\/2020",
-          "competenciaFim": "02\/2026",
-          "tipo_emprestimo": 98
+        nomeBanco: "CAIXA ECONOMICA FEDERAL",
+        codigoBanco: 104,
+        dataAverbacao: "22/10/2020",
+        numeroContrato: "211006110001687465",
+        valorEmprestado: 5646.08,
+        valorLiberado: 4400,
+        valorParcela: 88.22,
+        qtdParcelas: 64,
+        situacao: "ATIVA",
+        qtdParcelasPagas: 42,
+        competenciaInicio: "11/2020",
+        competenciaFim: "02/2026",
+        tipo_emprestimo: 98,
       },
       {
-          "nomeBanco": "BANCO C6 CONSIGNADO",
-          "codigoBanco": 626,
-          "dataAverbacao": "24\/11\/2020",
-          "numeroContrato": "010014343686",
-          "valorEmprestado": 6721.68,
-          "valorLiberado": 3231.83,
-          "valorParcela": 80.02,
-          "qtdParcelas": 84,
-          "situacao": "ATIVA",
-          "qtdParcelasPagas": 40,
-          "competenciaInicio": "12\/2020",
-          "competenciaFim": "11\/2027",
-          "tipo_emprestimo": 98
+        nomeBanco: "BANCO C6 CONSIGNADO",
+        codigoBanco: 626,
+        dataAverbacao: "24/11/2020",
+        numeroContrato: "010014343686",
+        valorEmprestado: 6721.68,
+        valorLiberado: 3231.83,
+        valorParcela: 80.02,
+        qtdParcelas: 84,
+        situacao: "ATIVA",
+        qtdParcelasPagas: 40,
+        competenciaInicio: "12/2020",
+        competenciaFim: "11/2027",
+        tipo_emprestimo: 98,
       },
       {
-          "nomeBanco": "BANCO C6 CONSIGNADO",
-          "codigoBanco": 626,
-          "dataAverbacao": "11\/11\/2020",
-          "numeroContrato": "010014013772",
-          "valorEmprestado": 4913.16,
-          "valorLiberado": 2353.72,
-          "valorParcela": 58.49,
-          "qtdParcelas": 84,
-          "situacao": "ATIVA",
-          "qtdParcelasPagas": 41,
-          "competenciaInicio": "12\/2020",
-          "competenciaFim": "11\/2027",
-          "tipo_emprestimo": 98
+        nomeBanco: "BANCO C6 CONSIGNADO",
+        codigoBanco: 626,
+        dataAverbacao: "11/11/2020",
+        numeroContrato: "010014013772",
+        valorEmprestado: 4913.16,
+        valorLiberado: 2353.72,
+        valorParcela: 58.49,
+        qtdParcelas: 84,
+        situacao: "ATIVA",
+        qtdParcelasPagas: 41,
+        competenciaInicio: "12/2020",
+        competenciaFim: "11/2027",
+        tipo_emprestimo: 98,
       },
-  ]
-})
-})
-
-
-
+    ],
+  });
+});
 
 // rout.post("/consultaBackoffice", async (req, res) => {
 //   const body = req.body.listaDadosPessoais;

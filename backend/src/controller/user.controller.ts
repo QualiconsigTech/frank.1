@@ -10,33 +10,38 @@ const prisma = new PrismaClient()
 const routes = Router()
 
 routes.post('/signup', async (request, response) => {
-  const name = request.body.username;
-  const pass = request.body.password;
-
-  if (name && pass) {
-      const hashedPassword = await hashPassword(pass);
+  const { username, password, officeId } = request.body;
+  const offId = officeId.toString()
+  if (username && password && officeId) {
+      const hashedPassword = await hashPassword(password);
       const userIsInDatabase = await prisma.user.findUnique({
           where: {
-              username: name
+              username: username
           }
       });
+      
       if (!userIsInDatabase) {
-          const newUser = await prisma.user.create({
-              data: {
-                  username: name,
-                  password: hashedPassword, 
-              }
-          });
-          response.status(200).json(newUser);
+          try {
+              const newUser = await prisma.user.create({
+                  data: {
+                      username: username,
+                      password: hashedPassword,
+                      officeId: offId 
+                  }
+              });
+              response.status(200).json(newUser);
+          } catch (error) {
+              console.error('Erro ao criar novo usuário:', error);
+              response.status(500).json('Ocorreu um erro ao criar um novo usuário');
+          }
       } else {
           response.status(401).json('Usuário já existe');
       }
   } else {
-      response.status(400).json('Nome de usuário e senha são obrigatórios');
+      response.status(400).json('Nome de usuário, senha e ID do escritório são obrigatórios');
   }
 });
 
-// Função para codificar a senha usando bcrypt
 async function hashPassword(password:string) {
   try {
       const saltRounds = 10; 

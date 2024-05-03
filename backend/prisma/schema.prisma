@@ -27,7 +27,7 @@ model User {
 
 model Office {
   id         String @id @default(uuid())
-  officeId  String  @unique
+  officeId   String @unique
   officeName String @unique
   users      User[]
   credits    String
@@ -65,7 +65,7 @@ model listaDadosBeneficio {
   valorMargemDisponivelRMC  Float
   basedeCalculo             Float
 
-  nb Float 
+  nb Float @unique
 
   @@map("listaDadosBeneficio")
 }
@@ -92,7 +92,7 @@ model listaRMC {
   numeroEmprestimo String
   limite           Float
   tipoEmprestimo   Int
-  nb               Float  
+  nb               Float
 
   @@map("listaRMC")
 }
@@ -112,7 +112,7 @@ model listaEmprestimo {
   competenciaInicio String
   competenciaFim    String
   tipoEmprestimo    Int
-  nb                Float  
+  nb                Float
 
   @@map("listaEmprestimo")
 }
