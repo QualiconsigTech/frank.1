@@ -1,14 +1,29 @@
 import axios from "axios";
 
-export const LoginMain =  (dados:any) => {
+export const LoginMain = async (dados: any) => {
   const url = "http://localhost:3333/signin";
   
-    axios.post(url, {
+  try {
+    const response = await axios.post(url, {
       username: dados.username,
       password: dados.password
-    }).then(function(response){
-      const authToken = response.data.token
-      localStorage.setItem('token', authToken)
-      console.log(response)
-    })
+    });
+
+    const authToken = response.data.token;
+    
+    return response;
+  } catch (error) {
+    
+    console.error("Login failed:", error);
+    throw error;
+  }
 };
+
+export const Extract = (prop:any) => {
+  const url = `http://localhost:3333/`
+  const ur = axios.create({
+    baseURL: url
+  })
+ const getExt = ur.get(`rt/consult/${prop}`).then(response => (response.data))
+ return getExt
+}

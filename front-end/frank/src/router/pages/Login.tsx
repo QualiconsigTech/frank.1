@@ -2,6 +2,9 @@ import { Box, Button, Flex, Icon, Input, Text } from "@chakra-ui/react";
 import { CiLogin } from "react-icons/ci";
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { LoginMain } from "../../api/login";
+import { useEffect, useState } from "react";
+import { Link, Navigate, redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const {
@@ -9,11 +12,22 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm()
-
-  const onSubmit: SubmitHandler<any> = (data) => LoginMain(data)
   
-  
+ const [dataReceived, setDataReceived] = useState<any>(false)
+ const navigate = useNavigate(); // Usando useNavigate para redirecionamento
 
+ const onSubmit: SubmitHandler<any> = async (data) => {
+  try {
+    const response = await LoginMain(data);
+    localStorage.setItem('token', response.data);
+    console.log(localStorage.getItem('token'))  
+    navigate('/puxaex')
+    
+  } catch (error) {
+    console.error("Login failed:", error);
+  }
+};
+  
    return (
     <Flex w={'100vw'} h={'100vh'} alignItems={'center'} bg={'gray.700'}>
       <Box w={'40%'} margin={'0 auto'} >

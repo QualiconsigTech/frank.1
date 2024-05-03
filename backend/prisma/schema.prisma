@@ -20,13 +20,14 @@ model User {
   password   String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  office     Office?  @relation(fields: [officeId], references: [id])
+  office     Office?  @relation(fields: [officeId], references: [officeId])
 
   @@map("user")
 }
 
 model Office {
   id         String @id @default(uuid())
+  officeId  String  @unique
   officeName String @unique
   users      User[]
   credits    String
@@ -64,7 +65,7 @@ model listaDadosBeneficio {
   valorMargemDisponivelRMC  Float
   basedeCalculo             Float
 
-  nb Float @unique
+  nb Float 
 
   @@map("listaDadosBeneficio")
 }
@@ -91,7 +92,7 @@ model listaRMC {
   numeroEmprestimo String
   limite           Float
   tipoEmprestimo   Int
-  nb               Float  @unique
+  nb               Float  
 
   @@map("listaRMC")
 }
@@ -111,7 +112,7 @@ model listaEmprestimo {
   competenciaInicio String
   competenciaFim    String
   tipoEmprestimo    Int
-  nb                Float  @unique
+  nb                Float  
 
   @@map("listaEmprestimo")
 }
