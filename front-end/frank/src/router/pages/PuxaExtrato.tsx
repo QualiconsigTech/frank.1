@@ -1,8 +1,9 @@
 import { Box, Button, Flex, Image, Input, Text } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Extract } from "../../api/login";
+import { Extract, ExtractForAdm, ExtractForBackoffice } from "../../api/login";
 import { useEffect, useState } from "react";
 import PDFViewer from "../../../components/pdfGenerator";
+import PDFGenerator from "../../../components/pdfGenerator";
 export default function GetExtract() {
   const {
     register,
@@ -21,9 +22,9 @@ export default function GetExtract() {
     console.log(username, office);
   };
 
-  const onSubmitComercial: SubmitHandler<any> = async (data) => {
+  const onSubmitBackOffice = async (data:any) => {
     const newData = await data.numeroRegistro;
-    const dataRe = await Extract(newData);
+    const dataRe = await ExtractForBackoffice(newData);
     console.log(dataRe);
     setReceivedApiResponse(dataRe);
     setInterval(() => {
@@ -31,12 +32,41 @@ export default function GetExtract() {
         setFormDataSubmited(true);
       }
     }, 2000);
-  };
-
-  const onSubmitBackOffice = async (data:any) => {
-
   }
 
+  const onSubmitAdm = async (data:any) => {
+    const newData = await data.numeroRegistro;
+    const dataRe = await ExtractForAdm(newData);
+    console.log(dataRe);
+    setReceivedApiResponse(dataRe);
+    setInterval(() => {
+      if (dataRe) {
+        setFormDataSubmited(true);
+      }
+    }, 2000);
+  }
+
+
+
+  const onSubmitComercial: SubmitHandler<any> = async (data) => {
+    if(office === "1") {
+      onSubmitBackOffice(data)
+    } else if (office == '2') {
+      const newData = await data.numeroRegistro;
+      const dataRe = await Extract(newData);
+      console.log(dataRe);
+      setReceivedApiResponse(dataRe);
+      setInterval(() => {
+        if (dataRe) {
+          setFormDataSubmited(true);
+        }
+      }, 2000);
+    } else if(office === '3') {
+      onSubmitAdm(data)
+    }   
+  };
+
+  
   useEffect(() => {
     receivedToken();
   });
@@ -61,7 +91,7 @@ export default function GetExtract() {
                 </Flex>
                 <Box>
                   <Text color={"white"} fontSize={"12px"} fontFamily={"Roboto"}>
-                    {username} -- {office === "1" ? <Text>Back-office</Text> : office === "2" ? <Text>Consultor</Text> : <Text>ADM</Text>}
+                    {username} -- {office === "1" ? <Text>Back-office</Text> : office === "2" ? <Text>Comercial</Text> : <Text>ADM</Text>}
 
                   </Text>
                 </Box>
@@ -101,10 +131,11 @@ export default function GetExtract() {
             margin={"0 auto"}
             mt="20px"
             h={"100vh"}
+            color={'white'}
           >
-            {/* {formDataIsSubmited === true && (
-              <PDFViewer propsResponse={receivedApiResponse} />
-            )} */}
+             {formDataIsSubmited && ( 
+            <PDFGenerator send={receivedApiResponse} /> 
+          )}
           </Flex>
         </Flex>
       </Flex>

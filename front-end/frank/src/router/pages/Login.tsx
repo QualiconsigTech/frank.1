@@ -13,7 +13,7 @@ export default function Login() {
     formState: { errors },
   } = useForm()
   
- const [dataReceived, setDataReceived] = useState<any>(false)
+ const [dataReceived, setDataReceived] = useState<any>()
  const navigate = useNavigate(); // Usando useNavigate para redirecionamento
 
  const onSubmit: SubmitHandler<any> = async (data) => {
@@ -36,6 +36,7 @@ export default function Login() {
           <Flex justify={'center'}>
             <Text fontWeight={'650'} color={'white'} fontSize={20}>Login</Text>
           </Flex>
+          
           <Box>
             <Input fontWeight={'500'} fontFamily={'poppins'} bg={'gray.200'} border={'none'}  type="text" placeholder="Username" {...register('username')}/>
           </Box>

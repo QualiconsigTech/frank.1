@@ -30,9 +30,18 @@ model Office {
   officeId   String @unique
   officeName String @unique
   users      User[]
-  credits    String
+  credits    Int
 
   @@map("office")
+}
+
+model Tokens {
+  id       String   @id @default(uuid())
+  username String
+  gasto    Int
+  hora     DateTime @default(now())
+
+  @@map("token")
 }
 
 model dadosPessoais {

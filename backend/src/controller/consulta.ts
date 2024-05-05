@@ -158,7 +158,7 @@ const prisma = new PrismaClient();
 //   }
 // });
 
-rout.get("/consult/:nb", async (req, res) => {
+rout.get("/consultBackoffice/:nb", async (req, res) => {
   const body = req.params.nb;
   const nby = parseFloat(body);
 
@@ -170,6 +170,15 @@ rout.get("/consult/:nb", async (req, res) => {
     });
 
     if (!dadosIsInDatabase) {
+      const office = await prisma.office.findUnique({
+        where: {
+          officeId: '1'
+        }
+      })
+      const credit = office?.credits
+      if(office!.credits > 0) {
+
+      
       const simul = await Simula();
       const listaDados = simul.listaDadosPessoais;
       const listaBeneficio = simul.listaDadosBeneficio;
@@ -283,7 +292,14 @@ rout.get("/consult/:nb", async (req, res) => {
           nb: nby,
         },
       });
-
+      await prisma.office.update({
+        where: {
+          officeId: '1'
+        },
+        data: {
+          credits: credit! - 1 
+        }
+      })
       res.send({
         dadosPessoais,
         dadosBancarios,
@@ -293,6 +309,7 @@ rout.get("/consult/:nb", async (req, res) => {
       });
 
       res.send({});
+    }
     } else {
       // Se os dados já existem no banco de dados
       const latest = new Date(dadosIsInDatabase.date);
@@ -305,7 +322,16 @@ rout.get("/consult/:nb", async (req, res) => {
 
       console.log(Math.abs(diferencaDias));
 
-      if (diferencaDias > 5) {
+      if (diferencaDias > 1) {
+        const office = await prisma.office.findUnique({
+          where: {
+            officeId: '1'
+          }
+        })
+        const credit = office?.credits
+        if(credit! > 0) {
+
+       
         const simul = await Simula();
         const listaDados = simul.listaDadosPessoais;
         const listaBeneficio = simul.listaDadosBeneficio;
@@ -426,6 +452,15 @@ rout.get("/consult/:nb", async (req, res) => {
           },
         });
 
+        await prisma.office.update({
+          where: {
+            officeId: '1'
+          },
+          data: {
+            credits: credit! - 1 
+          }
+        })
+
         res.send({
           dadosPessoais,
           dadosBancarios,
@@ -435,6 +470,708 @@ rout.get("/consult/:nb", async (req, res) => {
         });
 
         console.log("Atualizado");
+      }
+      }
+      const dadosPessoais = await prisma.dadosPessoais.findUnique({
+        where: {
+          nb: nby,
+        },
+      });
+      const dadosBancarios = await prisma.listaDadosBancario.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const dadosBeneficio = await prisma.listaDadosBeneficio.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const emprestimos = await prisma.listaEmprestimo.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const rmc = await prisma.listaRMC.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+
+      res.send({
+        dadosPessoais,
+        dadosBancarios,
+        dadosBeneficio,
+        emprestimos,
+        rmc,
+      });
+      console.log("lido do banco");
+    }
+  }
+});
+
+rout.get("/consultAdm/:nb", async (req, res) => {
+  const body = req.params.nb;
+  const nby = parseFloat(body);
+
+  if (body) {
+    const dadosIsInDatabase = await prisma.dadosPessoais.findUnique({
+      where: {
+        nb: nby,
+      },
+    });
+
+    if (!dadosIsInDatabase) {
+      const office = await prisma.office.findUnique({
+        where: {
+          officeId: '3'
+        }
+      })
+      const credit = office?.credits
+      if(office!.credits > 0) {
+
+      
+      const simul = await Simula();
+      const listaDados = simul.listaDadosPessoais;
+      const listaBeneficio = simul.listaDadosBeneficio;
+      const listaDadoBank = simul.listaDadosBancario;
+      const listaRmc = simul.listaRMC;
+      const listaEmprestimos = simul.listaEmprestimos;
+
+      const convertedCpf = parseInt(listaDados.cpf);
+      await prisma.dadosPessoais.create({
+        data: {
+          nb: nby,
+          cpf: convertedCpf,
+          ddb: listaDados.ddb,
+          nome: listaDados.nome,
+          dt_nascimento: listaDados.dt_nascimento,
+          sexo: listaDados.sexo,
+        },
+      });
+
+      await prisma.listaDadosBeneficio.create({
+        data: {
+          beneficio: listaBeneficio.beneficio,
+          especie: listaBeneficio.especie,
+          situacao: listaBeneficio.situacao,
+          pensao: listaBeneficio.pensao,
+          representanteLegal: listaBeneficio.representanteLegal,
+          possuiProcurador: listaBeneficio.possuiProcurador,
+          elegivel: listaBeneficio.elegivel,
+          bloqueioEmprestimo: listaBeneficio.bloqueioEmprestimo,
+          valorMargemDisponivelRCC: listaBeneficio.valorMargemDisponivelRCC,
+          valorMargemConsignavelEmp: listaBeneficio.valorMargemConsignavelEmp,
+          valorMargemDisponivelEmp: listaBeneficio.valorMargemDisponivelEmp,
+          valorMargemUtilizadaEmp: listaBeneficio.valorMargemUtilizadaEmp,
+          valorMargemDisponivelRMC: listaBeneficio.valorMargemDisponivelRMC,
+          basedeCalculo: listaBeneficio.basedeCalculo,
+          nb: nby,
+        },
+      });
+
+      await prisma.listaDadosBancario.create({
+        data: {
+          nomeBanco: listaDadoBank.nomeBanco,
+          codigoBanco: listaDadoBank.codigoBanco,
+          agencia: listaDadoBank.agencia,
+          cc: listaDadoBank.cc,
+          tipoMeioPagamento: listaDadoBank.tipoMeioPagamento,
+          nb: nby,
+        },
+      });
+
+      for (const rmc of listaRmc) {
+        await prisma.listaRMC.create({
+          data: {
+            situacao: rmc.situacao,
+            nomeBanco: rmc.nomeBanco,
+            valor: rmc.valor,
+            codigoBanco: rmc.codigoBanco,
+            dataInclusao: rmc.dataInclusao,
+            numeroEmprestimo: rmc.numeroEmprestimo,
+            limite: rmc.limite,
+            tipoEmprestimo: rmc["tipo emprestimo"],
+            nb: nby,
+          },
+        });
+      }
+
+      for (const emprestimo of listaEmprestimos) {
+        await prisma.listaEmprestimo.create({
+          data: {
+            nomeBanco: emprestimo.nomeBanco,
+            codigoBanco: emprestimo.codigoBanco,
+            dataAverbacao: emprestimo.dataAverbacao,
+            numeroContrato: emprestimo.numeroContrato,
+            valorEmprestado: emprestimo.valorEmprestado,
+            valorLiberado: emprestimo.valorLiberado,
+            valorParcela: emprestimo.valorParcela,
+            qtdParcelas: emprestimo.qtdParcelas,
+            situacao: emprestimo.situacao,
+            qtdParcelaPagas: emprestimo.qtdParcelasPagas,
+            competenciaInicio: emprestimo.competenciaInicio,
+            competenciaFim: emprestimo.competenciaFim,
+            tipoEmprestimo: emprestimo.tipo_emprestimo,
+            nb: nby,
+          },
+        });
+      }
+
+      console.log("Criado");
+      const dadosPessoais = await prisma.dadosPessoais.findUnique({
+        where: {
+          nb: nby,
+        },
+      });
+      const dadosBancarios = await prisma.listaDadosBancario.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const dadosBeneficio = await prisma.listaDadosBeneficio.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const emprestimos = await prisma.listaEmprestimo.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const rmc = await prisma.listaRMC.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      await prisma.office.update({
+        where: {
+          officeId: '3'
+        },
+        data: {
+          credits: credit! - 1 
+        }
+      })
+      res.send({
+        dadosPessoais,
+        dadosBancarios,
+        dadosBeneficio,
+        emprestimos,
+        rmc,
+      });
+
+      res.send({});
+    }
+    } else {
+      // Se os dados já existem no banco de dados
+      const latest = new Date(dadosIsInDatabase.date);
+      const hoje = new Date();
+
+      const diferencaMilissegundos = hoje.getTime() - latest.getTime();
+      const diferencaDias = Math.floor(
+        diferencaMilissegundos / (1000 * 60 * 60 * 24)
+      );
+
+      console.log(Math.abs(diferencaDias));
+
+      if (diferencaDias > 1) {
+        const office = await prisma.office.findUnique({
+          where: {
+            officeId: '3'
+          }
+        })
+        const credit = office?.credits
+        if(credit! > 0) {
+
+       
+        const simul = await Simula();
+        const listaDados = simul.listaDadosPessoais;
+        const listaBeneficio = simul.listaDadosBeneficio;
+        const listaDadoBank = simul.listaDadosBancario;
+        const listaRmc = simul.listaRMC;
+        const listaEmprestimos = simul.listaEmprestimos;
+
+        const convertedCpf = parseInt(listaDados.cpf);
+        await prisma.dadosPessoais.update({
+          where: {
+            nb: nby,
+          },
+          data: {
+            nb: listaDados.nb,
+            cpf: convertedCpf,
+            ddb: listaDados.ddb,
+            nome: listaDados.nome,
+            dt_nascimento: listaDados.dt_nascimento,
+            sexo: listaDados.sexo,
+            date: new Date(),
+          },
+        });
+
+        await prisma.listaDadosBeneficio.update({
+          where: {
+            nb: nby,
+          },
+          data: {
+            beneficio: listaBeneficio.beneficio,
+            especie: listaBeneficio.especie,
+            situacao: listaBeneficio.situacao,
+            pensao: listaBeneficio.pensao,
+            representanteLegal: listaBeneficio.representanteLegal,
+            possuiProcurador: listaBeneficio.possuiProcurador,
+            elegivel: listaBeneficio.elegivel,
+            bloqueioEmprestimo: listaBeneficio.bloqueioEmprestimo,
+            valorMargemDisponivelRCC: listaBeneficio.valorMargemDisponivelRCC,
+            valorMargemConsignavelEmp: listaBeneficio.valorMargemConsignavelEmp,
+            valorMargemDisponivelEmp: listaBeneficio.valorMargemDisponivelEmp,
+            valorMargemUtilizadaEmp: listaBeneficio.valorMargemUtilizadaEmp,
+            valorMargemDisponivelRMC: listaBeneficio.valorMargemDisponivelRMC,
+            basedeCalculo: listaBeneficio.basedeCalculo,
+            nb: listaBeneficio.nb,
+          },
+        });
+
+        await prisma.listaDadosBancario.create({
+          data: {
+            nomeBanco: listaDadoBank.nomeBanco,
+            codigoBanco: listaDadoBank.codigoBanco,
+            agencia: listaDadoBank.agencia,
+            cc: listaDadoBank.cc,
+            tipoMeioPagamento: listaDadoBank.tipoMeioPagamento,
+            nb: nby,
+          },
+        });
+
+        for (const rmc of listaRmc) {
+          await prisma.listaRMC.create({
+            data: {
+              situacao: rmc.situacao,
+              nomeBanco: rmc.nomeBanco,
+              valor: rmc.valor,
+              codigoBanco: rmc.codigoBanco,
+              dataInclusao: rmc.dataInclusao,
+              numeroEmprestimo: rmc.numeroEmprestimo,
+              limite: rmc.limite,
+              tipoEmprestimo: rmc["tipo emprestimo"],
+              nb: nby,
+            },
+          });
+        }
+
+        for (const emprestimo of listaEmprestimos) {
+          await prisma.listaEmprestimo.create({
+            data: {
+              nomeBanco: emprestimo.nomeBanco,
+              codigoBanco: emprestimo.codigoBanco,
+              dataAverbacao: emprestimo.dataAverbacao,
+              numeroContrato: emprestimo.numeroContrato,
+              valorEmprestado: emprestimo.valorEmprestado,
+              valorLiberado: emprestimo.valorLiberado,
+              valorParcela: emprestimo.valorParcela,
+              qtdParcelas: emprestimo.qtdParcelas,
+              situacao: emprestimo.situacao,
+              qtdParcelaPagas: emprestimo.qtdParcelasPagas,
+              competenciaInicio: emprestimo.competenciaInicio,
+              competenciaFim: emprestimo.competenciaFim,
+              tipoEmprestimo: emprestimo.tipo_emprestimo,
+              nb: nby,
+            },
+          });
+        }
+
+        const dadosPessoais = await prisma.dadosPessoais.findUnique({
+          where: {
+            nb: nby,
+          },
+        });
+        const dadosBancarios = await prisma.listaDadosBancario.findMany({
+          where: {
+            nb: nby,
+          },
+        });
+        const dadosBeneficio = await prisma.listaDadosBeneficio.findMany({
+          where: {
+            nb: nby,
+          },
+        });
+        const emprestimos = await prisma.listaEmprestimo.findMany({
+          where: {
+            nb: nby,
+          },
+        });
+        const rmc = await prisma.listaRMC.findMany({
+          where: {
+            nb: nby,
+          },
+        });
+
+        await prisma.office.update({
+          where: {
+            officeId: '3'
+          },
+          data: {
+            credits: credit! - 1 
+          }
+        })
+
+        res.send({
+          dadosPessoais,
+          dadosBancarios,
+          dadosBeneficio,
+          emprestimos,
+          rmc,
+        });
+
+        console.log("Atualizado");
+      }
+      }
+      const dadosPessoais = await prisma.dadosPessoais.findUnique({
+        where: {
+          nb: nby,
+        },
+      });
+      const dadosBancarios = await prisma.listaDadosBancario.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const dadosBeneficio = await prisma.listaDadosBeneficio.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const emprestimos = await prisma.listaEmprestimo.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const rmc = await prisma.listaRMC.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+
+      res.send({
+        dadosPessoais,
+        dadosBancarios,
+        dadosBeneficio,
+        emprestimos,
+        rmc,
+      });
+      console.log("lido do banco");
+    }
+  }
+});
+
+
+rout.get("/consult/:nb", async (req, res) => {
+  const body = req.params.nb;
+  const nby = parseFloat(body);
+
+  if (body) {
+    const dadosIsInDatabase = await prisma.dadosPessoais.findUnique({
+      where: {
+        nb: nby,
+      },
+    });
+
+    if (!dadosIsInDatabase) {
+      const office = await prisma.office.findUnique({
+        where: {
+          officeId: '2'
+        }
+      })
+      const credit = office?.credits
+      if(office!.credits > 0) {
+      const simul = await Simula();
+      const listaDados = simul.listaDadosPessoais;
+      const listaBeneficio = simul.listaDadosBeneficio;
+      const listaDadoBank = simul.listaDadosBancario;
+      const listaRmc = simul.listaRMC;
+      const listaEmprestimos = simul.listaEmprestimos;
+
+      const convertedCpf = parseInt(listaDados.cpf);
+      await prisma.dadosPessoais.create({
+        data: {
+          nb: nby,
+          cpf: convertedCpf,
+          ddb: listaDados.ddb,
+          nome: listaDados.nome,
+          dt_nascimento: listaDados.dt_nascimento,
+          sexo: listaDados.sexo,
+        },
+      });
+
+      await prisma.listaDadosBeneficio.create({
+        data: {
+          beneficio: listaBeneficio.beneficio,
+          especie: listaBeneficio.especie,
+          situacao: listaBeneficio.situacao,
+          pensao: listaBeneficio.pensao,
+          representanteLegal: listaBeneficio.representanteLegal,
+          possuiProcurador: listaBeneficio.possuiProcurador,
+          elegivel: listaBeneficio.elegivel,
+          bloqueioEmprestimo: listaBeneficio.bloqueioEmprestimo,
+          valorMargemDisponivelRCC: listaBeneficio.valorMargemDisponivelRCC,
+          valorMargemConsignavelEmp: listaBeneficio.valorMargemConsignavelEmp,
+          valorMargemDisponivelEmp: listaBeneficio.valorMargemDisponivelEmp,
+          valorMargemUtilizadaEmp: listaBeneficio.valorMargemUtilizadaEmp,
+          valorMargemDisponivelRMC: listaBeneficio.valorMargemDisponivelRMC,
+          basedeCalculo: listaBeneficio.basedeCalculo,
+          nb: nby,
+        },
+      });
+
+      await prisma.listaDadosBancario.create({
+        data: {
+          nomeBanco: listaDadoBank.nomeBanco,
+          codigoBanco: listaDadoBank.codigoBanco,
+          agencia: listaDadoBank.agencia,
+          cc: listaDadoBank.cc,
+          tipoMeioPagamento: listaDadoBank.tipoMeioPagamento,
+          nb: nby,
+        },
+      });
+
+      for (const rmc of listaRmc) {
+        await prisma.listaRMC.create({
+          data: {
+            situacao: rmc.situacao,
+            nomeBanco: rmc.nomeBanco,
+            valor: rmc.valor,
+            codigoBanco: rmc.codigoBanco,
+            dataInclusao: rmc.dataInclusao,
+            numeroEmprestimo: rmc.numeroEmprestimo,
+            limite: rmc.limite,
+            tipoEmprestimo: rmc["tipo emprestimo"],
+            nb: nby,
+          },
+        });
+      }
+
+      for (const emprestimo of listaEmprestimos) {
+        await prisma.listaEmprestimo.create({
+          data: {
+            nomeBanco: emprestimo.nomeBanco,
+            codigoBanco: emprestimo.codigoBanco,
+            dataAverbacao: emprestimo.dataAverbacao,
+            numeroContrato: emprestimo.numeroContrato,
+            valorEmprestado: emprestimo.valorEmprestado,
+            valorLiberado: emprestimo.valorLiberado,
+            valorParcela: emprestimo.valorParcela,
+            qtdParcelas: emprestimo.qtdParcelas,
+            situacao: emprestimo.situacao,
+            qtdParcelaPagas: emprestimo.qtdParcelasPagas,
+            competenciaInicio: emprestimo.competenciaInicio,
+            competenciaFim: emprestimo.competenciaFim,
+            tipoEmprestimo: emprestimo.tipo_emprestimo,
+            nb: nby,
+          },
+        });
+      }
+
+      console.log("Criado");
+      const dadosPessoais = await prisma.dadosPessoais.findUnique({
+        where: {
+          nb: nby,
+        },
+      });
+      const dadosBancarios = await prisma.listaDadosBancario.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const dadosBeneficio = await prisma.listaDadosBeneficio.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const emprestimos = await prisma.listaEmprestimo.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      const rmc = await prisma.listaRMC.findMany({
+        where: {
+          nb: nby,
+        },
+      });
+      await prisma.office.update({
+        where: {
+          officeId: '2'
+        },
+        data: {
+          credits: credit! - 1 
+        }
+      })
+
+      res.send({
+        dadosPessoais,
+        dadosBancarios,
+        dadosBeneficio,
+        emprestimos,
+        rmc,
+      });
+
+      res.send({});
+    }
+    } else {
+      // Se os dados já existem no banco de dados
+      const latest = new Date(dadosIsInDatabase.date);
+      const hoje = new Date();
+
+      const diferencaMilissegundos = hoje.getTime() - latest.getTime();
+      const diferencaDias = Math.floor(
+        diferencaMilissegundos / (1000 * 60 * 60 * 24)
+      );
+
+      console.log(Math.abs(diferencaDias));
+
+      if (diferencaDias > 5) {
+        const office = await prisma.office.findUnique({
+          where: {
+            officeId: '2'
+          }
+        })
+        const credit = office?.credits
+        if(credit! > 0) {
+        const simul = await Simula();
+        const listaDados = simul.listaDadosPessoais;
+        const listaBeneficio = simul.listaDadosBeneficio;
+        const listaDadoBank = simul.listaDadosBancario;
+        const listaRmc = simul.listaRMC;
+        const listaEmprestimos = simul.listaEmprestimos;
+
+        const convertedCpf = parseInt(listaDados.cpf);
+        await prisma.dadosPessoais.update({
+          where: {
+            nb: nby,
+          },
+          data: {
+            nb: listaDados.nb,
+            cpf: convertedCpf,
+            ddb: listaDados.ddb,
+            nome: listaDados.nome,
+            dt_nascimento: listaDados.dt_nascimento,
+            sexo: listaDados.sexo,
+            date: new Date(),
+          },
+        });
+
+        await prisma.listaDadosBeneficio.update({
+          where: {
+            nb: nby,
+          },
+          data: {
+            beneficio: listaBeneficio.beneficio,
+            especie: listaBeneficio.especie,
+            situacao: listaBeneficio.situacao,
+            pensao: listaBeneficio.pensao,
+            representanteLegal: listaBeneficio.representanteLegal,
+            possuiProcurador: listaBeneficio.possuiProcurador,
+            elegivel: listaBeneficio.elegivel,
+            bloqueioEmprestimo: listaBeneficio.bloqueioEmprestimo,
+            valorMargemDisponivelRCC: listaBeneficio.valorMargemDisponivelRCC,
+            valorMargemConsignavelEmp: listaBeneficio.valorMargemConsignavelEmp,
+            valorMargemDisponivelEmp: listaBeneficio.valorMargemDisponivelEmp,
+            valorMargemUtilizadaEmp: listaBeneficio.valorMargemUtilizadaEmp,
+            valorMargemDisponivelRMC: listaBeneficio.valorMargemDisponivelRMC,
+            basedeCalculo: listaBeneficio.basedeCalculo,
+            nb: listaBeneficio.nb,
+          },
+        });
+
+        await prisma.listaDadosBancario.create({
+          data: {
+            nomeBanco: listaDadoBank.nomeBanco,
+            codigoBanco: listaDadoBank.codigoBanco,
+            agencia: listaDadoBank.agencia,
+            cc: listaDadoBank.cc,
+            tipoMeioPagamento: listaDadoBank.tipoMeioPagamento,
+            nb: nby,
+          },
+        });
+
+        for (const rmc of listaRmc) {
+          await prisma.listaRMC.create({
+            data: {
+              situacao: rmc.situacao,
+              nomeBanco: rmc.nomeBanco,
+              valor: rmc.valor,
+              codigoBanco: rmc.codigoBanco,
+              dataInclusao: rmc.dataInclusao,
+              numeroEmprestimo: rmc.numeroEmprestimo,
+              limite: rmc.limite,
+              tipoEmprestimo: rmc["tipo emprestimo"],
+              nb: nby,
+            },
+          });
+        }
+
+        for (const emprestimo of listaEmprestimos) {
+          await prisma.listaEmprestimo.create({
+            data: {
+              nomeBanco: emprestimo.nomeBanco,
+              codigoBanco: emprestimo.codigoBanco,
+              dataAverbacao: emprestimo.dataAverbacao,
+              numeroContrato: emprestimo.numeroContrato,
+              valorEmprestado: emprestimo.valorEmprestado,
+              valorLiberado: emprestimo.valorLiberado,
+              valorParcela: emprestimo.valorParcela,
+              qtdParcelas: emprestimo.qtdParcelas,
+              situacao: emprestimo.situacao,
+              qtdParcelaPagas: emprestimo.qtdParcelasPagas,
+              competenciaInicio: emprestimo.competenciaInicio,
+              competenciaFim: emprestimo.competenciaFim,
+              tipoEmprestimo: emprestimo.tipo_emprestimo,
+              nb: nby,
+            },
+          });
+        }
+
+        const dadosPessoais = await prisma.dadosPessoais.findUnique({
+          where: {
+            nb: nby,
+          },
+        });
+        const dadosBancarios = await prisma.listaDadosBancario.findMany({
+          where: {
+            nb: nby,
+          },
+        });
+        const dadosBeneficio = await prisma.listaDadosBeneficio.findMany({
+          where: {
+            nb: nby,
+          },
+        });
+        const emprestimos = await prisma.listaEmprestimo.findMany({
+          where: {
+            nb: nby,
+          },
+        });
+        const rmc = await prisma.listaRMC.findMany({
+          where: {
+            nb: nby,
+          },
+        });
+        await prisma.office.update({
+          where: {
+            officeId: '2'
+          },
+          data: {
+            credits: credit! - 1 
+          }
+        })
+
+        res.send({
+          dadosPessoais,
+          dadosBancarios,
+          dadosBeneficio,
+          emprestimos,
+          rmc,
+        });
+
+        console.log("Atualizado");
+      }
       }
       const dadosPessoais = await prisma.dadosPessoais.findUnique({
         where: {
@@ -477,7 +1214,7 @@ rout.get("/consult/:nb", async (req, res) => {
 rout.get("/teste", (req, res) => {
   res.send({
     listaDadosPessoais: {
-      nb: 3232321,
+      nb: 2233,
       cpf: 9246264886,
       ddb: "2001-01-09",
       nome: "WANDERCY MARTINS DA CRUZ",
