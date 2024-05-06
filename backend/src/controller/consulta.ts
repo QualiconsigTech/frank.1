@@ -179,12 +179,13 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
       if(office!.credits > 0) {
 
       
-      const simul = await Simula();
+      const simul = await Simula(nby);
       const listaDados = simul.listaDadosPessoais;
       const listaBeneficio = simul.listaDadosBeneficio;
       const listaDadoBank = simul.listaDadosBancario;
       const listaRmc = simul.listaRMC;
       const listaEmprestimos = simul.listaEmprestimos;
+      const novosRcc = simul.novos_RCC
 
       const convertedCpf = parseInt(listaDados.cpf);
       await prisma.dadosPessoais.create({
@@ -332,7 +333,7 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
         if(credit! > 0) {
 
        
-        const simul = await Simula();
+        const simul = await Simula(nby);
         const listaDados = simul.listaDadosPessoais;
         const listaBeneficio = simul.listaDadosBeneficio;
         const listaDadoBank = simul.listaDadosBancario;
@@ -355,10 +356,7 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
           },
         });
 
-        await prisma.listaDadosBeneficio.update({
-          where: {
-            nb: nby,
-          },
+        await prisma.listaDadosBeneficio.create({
           data: {
             beneficio: listaBeneficio.beneficio,
             especie: listaBeneficio.especie,
@@ -531,12 +529,13 @@ rout.get("/consultAdm/:nb", async (req, res) => {
       if(office!.credits > 0) {
 
       
-      const simul = await Simula();
+      const simul = await Simula(nby);
       const listaDados = simul.listaDadosPessoais;
       const listaBeneficio = simul.listaDadosBeneficio;
       const listaDadoBank = simul.listaDadosBancario;
       const listaRmc = simul.listaRMC;
       const listaEmprestimos = simul.listaEmprestimos;
+      const novosRcc = simul.novos_RCC
 
       const convertedCpf = parseInt(listaDados.cpf);
       await prisma.dadosPessoais.create({
@@ -597,6 +596,22 @@ rout.get("/consultAdm/:nb", async (req, res) => {
         });
       }
 
+      for (const rcc of novosRcc) {
+        await prisma.novos_RCC.create({
+          data: {
+            situacao: rcc.situacao,
+            nomeBanco: rcc.nomeBanco,
+            valor: rcc.valor,
+            codigoBanco: rcc.codigoBanco,
+            dataInclusao: rcc.dataInclusao,
+            numeroEmprestimo: rcc.numeroEmprestimo,
+            limite: rcc.limite,
+            tipoEmprestimo: rcc['tipo emprestimo'],
+            nb: nby
+          }
+        })
+      }
+
       for (const emprestimo of listaEmprestimos) {
         await prisma.listaEmprestimo.create({
           data: {
@@ -639,6 +654,11 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           nb: nby,
         },
       });
+      const rcc = await prisma.novos_RCC.findMany({
+        where: {
+          nb: nby
+        }
+      })
       const rmc = await prisma.listaRMC.findMany({
         where: {
           nb: nby,
@@ -658,9 +678,10 @@ rout.get("/consultAdm/:nb", async (req, res) => {
         dadosBeneficio,
         emprestimos,
         rmc,
+        rcc
       });
 
-      res.send({});
+
     }
     } else {
       // Se os dados já existem no banco de dados
@@ -684,13 +705,13 @@ rout.get("/consultAdm/:nb", async (req, res) => {
         if(credit! > 0) {
 
        
-        const simul = await Simula();
+        const simul = await Simula(nby);
         const listaDados = simul.listaDadosPessoais;
         const listaBeneficio = simul.listaDadosBeneficio;
         const listaDadoBank = simul.listaDadosBancario;
         const listaRmc = simul.listaRMC;
         const listaEmprestimos = simul.listaEmprestimos;
-
+        const novosRcc = simul.novos_RCC  
         const convertedCpf = parseInt(listaDados.cpf);
         await prisma.dadosPessoais.update({
           where: {
@@ -707,10 +728,8 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           },
         });
 
-        await prisma.listaDadosBeneficio.update({
-          where: {
-            nb: nby,
-          },
+        await prisma.listaDadosBeneficio.create({
+         
           data: {
             beneficio: listaBeneficio.beneficio,
             especie: listaBeneficio.especie,
@@ -730,7 +749,10 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           },
         });
 
-        await prisma.listaDadosBancario.create({
+        await prisma.listaDadosBancario.update({
+          where: {
+            nb: nby
+          },
           data: {
             nomeBanco: listaDadoBank.nomeBanco,
             codigoBanco: listaDadoBank.codigoBanco,
@@ -757,6 +779,23 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           });
         }
 
+        for (const rcc of novosRcc) {
+          await prisma.novos_RCC.create({
+            data: {
+              situacao: rcc.situacao,
+              nomeBanco: rcc.nomeBanco,
+              valor: rcc.valor,
+              codigoBanco: rcc.codigoBanco,
+              dataInclusao: rcc.dataInclusao,
+              numeroEmprestimo: rcc.numeroEmprestimo,
+              limite: rcc.limite,
+              tipoEmprestimo: rcc['tipo emprestimo'],
+              nb: nby
+            }
+          })
+        }
+
+        
         for (const emprestimo of listaEmprestimos) {
           await prisma.listaEmprestimo.create({
             data: {
@@ -804,6 +843,12 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           },
         });
 
+        const rcc = await prisma.novos_RCC.findMany({
+          where: {
+            nb: nby
+          }
+        })
+
         await prisma.office.update({
           where: {
             officeId: '3'
@@ -819,6 +864,7 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           dadosBeneficio,
           emprestimos,
           rmc,
+          rcc
         });
 
         console.log("Atualizado");
@@ -849,6 +895,12 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           nb: nby,
         },
       });
+      
+      const rcc = await prisma.novos_RCC.findMany({
+        where: {
+          nb: nby
+        }
+      })
 
       res.send({
         dadosPessoais,
@@ -856,6 +908,7 @@ rout.get("/consultAdm/:nb", async (req, res) => {
         dadosBeneficio,
         emprestimos,
         rmc,
+        rcc
       });
       console.log("lido do banco");
     }
@@ -882,13 +935,13 @@ rout.get("/consult/:nb", async (req, res) => {
       })
       const credit = office?.credits
       if(office!.credits > 0) {
-      const simul = await Simula();
+      const simul = await Simula(nby);
       const listaDados = simul.listaDadosPessoais;
       const listaBeneficio = simul.listaDadosBeneficio;
       const listaDadoBank = simul.listaDadosBancario;
       const listaRmc = simul.listaRMC;
       const listaEmprestimos = simul.listaEmprestimos;
-
+      const novosRcc = simul.novos_RCC
       const convertedCpf = parseInt(listaDados.cpf);
       await prisma.dadosPessoais.create({
         data: {
@@ -921,6 +974,22 @@ rout.get("/consult/:nb", async (req, res) => {
         },
       });
 
+      for (const rcc of novosRcc) {
+        await prisma.novos_RCC.create({
+          data: {
+            situacao: rcc.situacao,
+            nomeBanco: rcc.nomeBanco,
+            valor: rcc.valor,
+            codigoBanco: rcc.codigoBanco,
+            dataInclusao: rcc.dataInclusao,
+            numeroEmprestimo: rcc.numeroEmprestimo,
+            limite: rcc.limite,
+            tipoEmprestimo: rcc['tipo emprestimo'],
+            nb: nby
+          }
+        })
+      }
+
       await prisma.listaDadosBancario.create({
         data: {
           nomeBanco: listaDadoBank.nomeBanco,
@@ -947,6 +1016,8 @@ rout.get("/consult/:nb", async (req, res) => {
           },
         });
       }
+
+    
 
       for (const emprestimo of listaEmprestimos) {
         await prisma.listaEmprestimo.create({
@@ -980,6 +1051,11 @@ rout.get("/consult/:nb", async (req, res) => {
           nb: nby,
         },
       });
+      const rcc = await prisma.novos_RCC.findMany({
+        where: {
+          nb: nby
+        }
+      })
       const dadosBeneficio = await prisma.listaDadosBeneficio.findMany({
         where: {
           nb: nby,
@@ -1010,6 +1086,7 @@ rout.get("/consult/:nb", async (req, res) => {
         dadosBeneficio,
         emprestimos,
         rmc,
+        rcc
       });
 
       res.send({});
@@ -1034,13 +1111,13 @@ rout.get("/consult/:nb", async (req, res) => {
         })
         const credit = office?.credits
         if(credit! > 0) {
-        const simul = await Simula();
+        const simul = await Simula(nby);
         const listaDados = simul.listaDadosPessoais;
         const listaBeneficio = simul.listaDadosBeneficio;
         const listaDadoBank = simul.listaDadosBancario;
         const listaRmc = simul.listaRMC;
         const listaEmprestimos = simul.listaEmprestimos;
-
+        const novosRcc = simul.novos_RCC
         const convertedCpf = parseInt(listaDados.cpf);
         await prisma.dadosPessoais.update({
           where: {
@@ -1057,10 +1134,8 @@ rout.get("/consult/:nb", async (req, res) => {
           },
         });
 
-        await prisma.listaDadosBeneficio.update({
-          where: {
-            nb: nby,
-          },
+        await prisma.listaDadosBeneficio.create({
+         
           data: {
             beneficio: listaBeneficio.beneficio,
             especie: listaBeneficio.especie,
@@ -1127,6 +1202,21 @@ rout.get("/consult/:nb", async (req, res) => {
             },
           });
         }
+        for (const rcc of novosRcc) {
+          await prisma.novos_RCC.create({
+            data: {
+              situacao: rcc.situacao,
+              nomeBanco: rcc.nomeBanco,
+              valor: rcc.valor,
+              codigoBanco: rcc.codigoBanco,
+              dataInclusao: rcc.dataInclusao,
+              numeroEmprestimo: rcc.numeroEmprestimo,
+              limite: rcc.limite,
+              tipoEmprestimo: rcc['tipo emprestimo'],
+              nb: nby
+            }
+          })
+        }
 
         const dadosPessoais = await prisma.dadosPessoais.findUnique({
           where: {
@@ -1153,6 +1243,11 @@ rout.get("/consult/:nb", async (req, res) => {
             nb: nby,
           },
         });
+        const rcc = await prisma.novos_RCC.findMany({
+          where: {
+            nb: nby
+          }
+        })
         await prisma.office.update({
           where: {
             officeId: '2'
@@ -1167,6 +1262,7 @@ rout.get("/consult/:nb", async (req, res) => {
           dadosBancarios,
           dadosBeneficio,
           emprestimos,
+          rcc,
           rmc,
         });
 
@@ -1193,6 +1289,11 @@ rout.get("/consult/:nb", async (req, res) => {
           nb: nby,
         },
       });
+      const rcc = await prisma.novos_RCC.findMany({
+        where: {
+          nb: nby
+        }
+      })
       const rmc = await prisma.listaRMC.findMany({
         where: {
           nb: nby,
@@ -1205,6 +1306,7 @@ rout.get("/consult/:nb", async (req, res) => {
         dadosBeneficio,
         emprestimos,
         rmc,
+        rcc
       });
       console.log("lido do banco");
     }
@@ -1214,7 +1316,7 @@ rout.get("/consult/:nb", async (req, res) => {
 rout.get("/teste", (req, res) => {
   res.send({
     listaDadosPessoais: {
-      nb: 2233,
+      nb: 6666,
       cpf: 9246264886,
       ddb: "2001-01-09",
       nome: "WANDERCY MARTINS DA CRUZ",

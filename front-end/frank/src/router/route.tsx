@@ -16,8 +16,9 @@ const PrivateRoute = ({ element, path }: any) => {
 
   try {
     const decodedToken: any = jwtDecode(token);
-    localStorage.setItem('username', decodedToken.username)
-    localStorage.setItem('office', decodedToken.officeId)
+    localStorage.setItem('username', decodedToken.userIsInDatabase.username)
+    localStorage.setItem('office', decodedToken.userIsInDatabase.officeId)
+    localStorage.setItem('credits', decodedToken.office.credits)
     const currentTime = Math.floor(Date.now() / 1000);
     if (decodedToken.exp < currentTime) {
       return <Navigate to="/login" replace />;

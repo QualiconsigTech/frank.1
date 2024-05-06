@@ -19,6 +19,39 @@ export const LoginMain = async (dados: any) => {
   }
 };
 
+export const CreateUser = async (dados: any) => {
+  const url = "http://localhost:3333/signup";
+ 
+  try {
+    const response = await axios.post(url, {
+      username: dados.username,
+      password: dados.password,
+      officeId: dados.office,
+    });
+    return response;
+  } catch(err) {
+    console.log("Usuário ou senha inválidos");
+    
+  }
+};
+
+export const Update = async (dados: any) => {
+
+  const url = "http://localhost:3333/patch";
+ 
+  try {
+    const response = await axios.patch(url, {
+      username: dados.username,
+      officeId: dados.office,
+    });
+    console.log(response)
+    return response;
+  } catch(err) {
+    console.log("Usuario não pode ser alterado");
+    
+  }
+}
+
 export const Extract = (prop:any) => {
   const url = `http://localhost:3333/`
   const ur = axios.create({

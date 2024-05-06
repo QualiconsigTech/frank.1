@@ -5,6 +5,7 @@ import { LoginMain } from "../../api/login";
 import { useEffect, useState } from "react";
 import { Link, Navigate, redirect } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { ButtonGlass } from "../../assets/button";
 
 export default function Login() {
   const {
@@ -50,6 +51,7 @@ export default function Login() {
               <Text textAlign={'center'}>Logar</Text>
               <Icon textAlign={'center'} fontSize={20} as={CiLogin }/>
             </Button>
+            
           </Box>
         </Flex>
           </form>

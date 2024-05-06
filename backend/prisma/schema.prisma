@@ -16,7 +16,7 @@ datasource db {
 model User {
   userId     String   @id @default(uuid())
   username   String   @unique
-  officeId   String?  @default(uuid())
+  officeId   String   @default(uuid())
   password   String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
@@ -46,82 +46,97 @@ model Tokens {
 
 model dadosPessoais {
   id            String   @id @default(uuid())
-  nb            Float    @unique
-  cpf           Float
-  ddb           String
-  nome          String
-  dt_nascimento String
-  sexo          String
+  nb            Float?   @unique
+  cpf           Float?
+  ddb           String?
+  nome          String?
+  dt_nascimento String?
+  sexo          String?
   date          DateTime @default(now())
 
   @@map("dadosPessoais")
 }
 
 model listaDadosBeneficio {
-  id                        String  @id @default(uuid())
-  beneficio                 Float
-  especie                   String
-  situacao                  String
-  pensao                    Boolean
-  representanteLegal        Boolean
-  possuiProcurador          Boolean
-  elegivel                  Boolean
-  bloqueioEmprestimo        Boolean
-  valorMargemDisponivelRCC  Float
-  valorMargemConsignavelEmp Float
-  valorMargemDisponivelEmp  Float
-  valorMargemUtilizadaEmp   Float
-  valorMargemDisponivelRMC  Float
-  basedeCalculo             Float
+  id                        String @unique  @id @default(uuid())
+  beneficio                 Float?
+  especie                   String?
+  situacao                  String?
+  pensao                    Boolean?
+  representanteLegal        Boolean?
+  possuiProcurador          Boolean?
+  elegivel                  Boolean?
+  bloqueioEmprestimo        Boolean?
+  valorMargemDisponivelRCC  Float?
+  valorMargemConsignavelEmp Float?
+  valorMargemDisponivelEmp  Float?
+  valorMargemUtilizadaEmp   Float?
+  valorMargemDisponivelRMC  Float?
+  basedeCalculo             Float?
 
-  nb Float @unique
+  nb Float?
 
   @@map("listaDadosBeneficio")
 }
 
 model listaDadosBancario {
-  id                String @id @default(uuid())
-  nomeBanco         String
-  codigoBanco       Int
-  agencia           String
-  cc                String
-  tipoMeioPagamento String
-  nb                Float  @unique
+  id                String  @id @default(uuid())
+  nomeBanco         String?
+  codigoBanco       Int?
+  agencia           String?
+  cc                String?
+  tipoMeioPagamento String?
+  nb                Float?  @unique
 
   @@map("listaDadosBancario")
 }
 
 model listaRMC {
-  id               String @id @default(uuid())
-  situacao         String
-  nomeBanco        String
-  valor            Float
-  codigoBanco      Int
-  dataInclusao     String
-  numeroEmprestimo String
-  limite           Float
-  tipoEmprestimo   Int
-  nb               Float
+  id               String  @id @default(uuid())
+  situacao         String?
+  nomeBanco        String?
+  valor            Float?
+  codigoBanco      Int?
+  dataInclusao     String?
+  numeroEmprestimo String?
+  limite           Float?
+  tipoEmprestimo   Int?
+  nb               Float?
 
   @@map("listaRMC")
 }
 
 model listaEmprestimo {
-  id                String @id @default(uuid())
-  nomeBanco         String
-  codigoBanco       Int
-  dataAverbacao     String
-  numeroContrato    String
-  valorEmprestado   Float
-  valorLiberado     Float
-  valorParcela      Float
-  qtdParcelas       Int
-  situacao          String
-  qtdParcelaPagas   Int
-  competenciaInicio String
-  competenciaFim    String
-  tipoEmprestimo    Int
-  nb                Float
+  id                String  @id @default(uuid())
+  nomeBanco         String?
+  codigoBanco       Int?
+  dataAverbacao     String?
+  numeroContrato    String?
+  valorEmprestado   Float?
+  valorLiberado     Float?
+  valorParcela      Float?
+  qtdParcelas       Int?
+  situacao          String?
+  qtdParcelaPagas   Int?
+  competenciaInicio String?
+  competenciaFim    String?
+  tipoEmprestimo    Int?
+  nb                Float?
 
   @@map("listaEmprestimo")
+}
+
+model novos_RCC {
+  id               String  @id @default(uuid())
+  situacao         String?
+  nomeBanco        String?
+  valor            Int?
+  codigoBanco      Int?
+  dataInclusao     String?
+  numeroEmprestimo String?
+  limite           String?
+  tipoEmprestimo   Int?
+  nb               Float?
+
+  @@map("novos_RCC")
 }

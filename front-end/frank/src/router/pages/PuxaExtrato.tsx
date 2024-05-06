@@ -12,11 +12,14 @@ export default function GetExtract() {
   } = useForm();
   const [formDataIsSubmited, setFormDataSubmited] = useState(false);
   const [receivedApiResponse, setReceivedApiResponse] = useState();
+  const [receivedCredits, setReceivedCredits] = useState<any>()
   const [username, setUsername] = useState<any>();
   const [office, setOffice] = useState<any>();
   const receivedToken = () => {
     const username = localStorage.getItem("username");
     const office = localStorage.getItem("office");
+    const credits = localStorage.getItem('credits')
+    setReceivedCredits(credits)
     setOffice(office);
     setUsername(username);
     console.log(username, office);
@@ -92,7 +95,7 @@ export default function GetExtract() {
                 <Box>
                   <Text color={"white"} fontSize={"12px"} fontFamily={"Roboto"}>
                     {username} -- {office === "1" ? <Text>Back-office</Text> : office === "2" ? <Text>Comercial</Text> : <Text>ADM</Text>}
-
+                    <Text>Creditos: {receivedCredits}</Text>
                   </Text>
                 </Box>
               </Flex>

@@ -63,10 +63,16 @@ routes.post('/signin', async (request:Request, response:Response) => {
         username: name,
       }
     })
+    
+    const office = await prisma.office.findUnique({
+      where: {
+        officeId: userIsInDatabase!.officeId
+      }
+    })
     if (userIsInDatabase) {
-      const passwordMatch = await bcrypt.compare(pass, userIsInDatabase?.password);
+      const passwordMatch = await bcrypt.compare(pass, userIsInDatabase?.password );
       if (passwordMatch) {
-          const token = jwt.sign(userIsInDatabase, secretKey, {expiresIn: '1h'})
+          const token = jwt.sign({userIsInDatabase, office}, secretKey, {expiresIn: '1h'})
           response.status(200).json(token);
       } else {
           response.status(401).json('Usuário ou senha inválidos');
