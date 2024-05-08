@@ -1,5 +1,4 @@
-import { Box, Button, Flex, Input, Select, Text } from "@chakra-ui/react";
-import React from "react";
+import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export const DeleteUser = () => {
@@ -7,10 +6,11 @@ export const DeleteUser = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
   } = useForm();
+ 
 
   const handleRemove: SubmitHandler<any > = async(data) => {
+    
     console.log(data)
   }
 

@@ -14,6 +14,7 @@ routes.post('/signup', async (request, response) => {
   const offId = officeId.toString()
   if (username && password && officeId) {
       const hashedPassword = await hashPassword(password);
+      
       const userIsInDatabase = await prisma.user.findUnique({
           where: {
               username: username
@@ -87,9 +88,8 @@ routes.post('/signin', async (request:Request, response:Response) => {
 
 routes.patch('/patch', async (request:Request, response:Response) => {
   const name = request.body.username
-  const pass = request.body.password
-  const newPass = request.body.newPass
-  const hashedPassword = await hashPassword(newPass);
+  const office = request.body.officeId
+ 
   if(name) {
     const userIsInDatabase = await prisma.user.findUnique({
       where: {
@@ -97,20 +97,18 @@ routes.patch('/patch', async (request:Request, response:Response) => {
       }
     })
     if (userIsInDatabase) {
-      const passwordMatch = await bcrypt.compare(pass, userIsInDatabase?.password);
-      if (passwordMatch) {
           const modificated = await prisma.user.update({
             where: {
               username: name
             },
             data: {
-              password: hashedPassword
+              officeId: office
             }
           })
           response.status(200).json(modificated)
       } else {
           response.status(401).json('Usuário ou senha inválidos');
-      }
+      
   }
   }
 })

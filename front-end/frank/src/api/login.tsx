@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const LoginMain = async (dados: any) => {
-  const url = "http://localhost:3333/signin";
+  const url = "http://192.168.4.145:3333/signin";
   
   try {
     const response = await axios.post(url, {
@@ -20,7 +20,7 @@ export const LoginMain = async (dados: any) => {
 };
 
 export const CreateUser = async (dados: any) => {
-  const url = "http://localhost:3333/signup";
+  const url = "http://192.168.4.145:3333/signup";
  
   try {
     const response = await axios.post(url, {
@@ -37,12 +37,12 @@ export const CreateUser = async (dados: any) => {
 
 export const Update = async (dados: any) => {
 
-  const url = "http://localhost:3333/patch";
+  const url = "http://192.168.4.145:3333/patch";
  
   try {
     const response = await axios.patch(url, {
       username: dados.username,
-      officeId: dados.office,
+      officeId: dados.officeId,
     });
     console.log(response)
     return response;
@@ -53,7 +53,7 @@ export const Update = async (dados: any) => {
 }
 
 export const Extract = (prop:any) => {
-  const url = `http://localhost:3333/`
+  const url = `http://192.168.4.145:3333/`
   const ur = axios.create({
     baseURL: url
   })
@@ -63,7 +63,7 @@ export const Extract = (prop:any) => {
 
 
 export const ExtractForBackoffice = (prop:any) => {
-  const url = `http://localhost:3333/`
+  const url = `http://192.168.4.145:3333/`
   const ur = axios.create({
     baseURL: url
   })
@@ -72,10 +72,20 @@ export const ExtractForBackoffice = (prop:any) => {
 }
 
 export const ExtractForAdm = (prop:any) => {
-  const url = `http://localhost:3333/`
+  const url = `http://192.168.4.145:3333/`
   const ur = axios.create({
     baseURL: url
   })
  const getExt = ur.get(`rt/consultAdm/${prop}`).then(response => (response.data))
  return getExt
+}
+
+
+export const getInfoCredits = (prop:any) => {
+  const url = `http://192.168.4.145:3333/`
+  const ur = axios.create({
+    baseURL: url
+  })
+ const getCredits = ur.get(`/office/credits/${prop}`).then(response => (response.data))
+ return getCredits
 }

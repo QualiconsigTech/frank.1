@@ -2,19 +2,16 @@ import { Box, Button, Flex, Icon, Input, Text } from "@chakra-ui/react";
 import { CiLogin } from "react-icons/ci";
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { LoginMain } from "../../api/login";
-import { useEffect, useState } from "react";
-import { Link, Navigate, redirect } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { ButtonGlass } from "../../assets/button";
+
 
 export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
   } = useForm()
   
- const [dataReceived, setDataReceived] = useState<any>()
+ 
  const navigate = useNavigate(); // Usando useNavigate para redirecionamento
 
  const onSubmit: SubmitHandler<any> = async (data) => {

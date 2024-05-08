@@ -1,10 +1,10 @@
 import { Box, Button, Flex, Input, Select, Text } from "@chakra-ui/react"
-
+import React from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { CreateUser } from "../src/api/login"
 import { useState } from "react"
 
-export const CreateUserComponent = () => {
+export const AddCredit = () => {
 
   const {
     register,
@@ -29,10 +29,9 @@ export const CreateUserComponent = () => {
    
     <Box bg='#353345' w={'40%'} p={10} borderRadius={'7px'}>
       <form onSubmit={handleSubmit(handleCreateUser)}>
-        <Text fontWeight={'650'} mb={2} color={'#d3c22c'}>Registro de novo usuario</Text>
+        <Text fontWeight={'650'} mb={2} color={'#d3c22c'}>Adicionar credito</Text>
         <Flex   justify={'center'} flexDir={'column'} gap={2}>
-          <Input color={'white'} border={'none'} bg={'#1d1c2d'} placeholder={'nome do usuario'} {...register('username')}/>
-          <Input color={'white'} type="password" border={'none'} bg={'#1d1c2d'} placeholder="Digite a senha do usuario" {...register("password")}/>
+          <Input color={'white'} type="number" border={'none'} bg={'#1d1c2d'} placeholder="Quantidade de credito" {...register("password")}/>
           <Select color={'white'}  border={'none'} bg={'#1d1c2d'} placeholder="Selecione o cargo" {...register("office")}>
             <option style={{
               background: "#1d1c2d"

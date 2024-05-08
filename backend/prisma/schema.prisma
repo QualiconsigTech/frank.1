@@ -16,7 +16,7 @@ datasource db {
 model User {
   userId     String   @id @default(uuid())
   username   String   @unique
-  officeId   String   @default(uuid())
+  officeId   String   @default(uuid())  
   password   String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
@@ -134,7 +134,7 @@ model novos_RCC {
   codigoBanco      Int?
   dataInclusao     String?
   numeroEmprestimo String?
-  limite           String?
+  limite           Int?
   tipoEmprestimo   Int?
   nb               Float?
 

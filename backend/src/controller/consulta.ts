@@ -301,15 +301,18 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
           credits: credit! - 1 
         }
       })
+      const gerado = 'Dados criados'
+
       res.send({
         dadosPessoais,
         dadosBancarios,
         dadosBeneficio,
         emprestimos,
         rmc,
+        gerado
       });
 
-      res.send({});
+     
     }
     } else {
       // Se os dados já existem no banco de dados
@@ -327,6 +330,21 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
         const office = await prisma.office.findUnique({
           where: {
             officeId: '1'
+          }
+        })
+        await prisma.listaEmprestimo.deleteMany({
+          where: {
+            nb: nby
+          }
+        })
+        await prisma.listaRMC.deleteMany({
+          where: {
+            nb: nby
+          }
+        })
+        await prisma.novos_RCC.deleteMany({
+          where: {
+            nb: nby
           }
         })
         const credit = office?.credits
@@ -458,6 +476,7 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
             credits: credit! - 1 
           }
         })
+        const gerado = 'Dados atualizados no banco de dados'
 
         res.send({
           dadosPessoais,
@@ -465,6 +484,7 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
           dadosBeneficio,
           emprestimos,
           rmc,
+          gerado
         });
 
         console.log("Atualizado");
@@ -495,6 +515,7 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
           nb: nby,
         },
       });
+      const gerado = 'Dados puxados do banco de dados'
 
       res.send({
         dadosPessoais,
@@ -502,6 +523,7 @@ rout.get("/consultBackoffice/:nb", async (req, res) => {
         dadosBeneficio,
         emprestimos,
         rmc,
+        gerado
       });
       console.log("lido do banco");
     }
@@ -672,13 +694,15 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           credits: credit! - 1 
         }
       })
+      const gerado = 'Dados atualizados no banco de dados'
       res.send({
         dadosPessoais,
         dadosBancarios,
         dadosBeneficio,
         emprestimos,
         rmc,
-        rcc
+        rcc,
+        gerado
       });
 
 
@@ -699,6 +723,21 @@ rout.get("/consultAdm/:nb", async (req, res) => {
         const office = await prisma.office.findUnique({
           where: {
             officeId: '3'
+          }
+        })
+        await prisma.listaEmprestimo.deleteMany({
+          where: {
+            nb: nby
+          }
+        })
+        await prisma.listaRMC.deleteMany({
+          where: {
+            nb: nby
+          }
+        })
+        await prisma.novos_RCC.deleteMany({
+          where: {
+            nb: nby
           }
         })
         const credit = office?.credits
@@ -857,14 +896,15 @@ rout.get("/consultAdm/:nb", async (req, res) => {
             credits: credit! - 1 
           }
         })
-
+        const gerado = 'Dados atualizados no banco de dados'
         res.send({
           dadosPessoais,
           dadosBancarios,
           dadosBeneficio,
           emprestimos,
           rmc,
-          rcc
+          rcc,
+          gerado
         });
 
         console.log("Atualizado");
@@ -901,14 +941,15 @@ rout.get("/consultAdm/:nb", async (req, res) => {
           nb: nby
         }
       })
-
+      const gerado = 'Dados puxados do banco de dados'
       res.send({
         dadosPessoais,
         dadosBancarios,
         dadosBeneficio,
         emprestimos,
         rmc,
-        rcc
+        rcc,
+        gerado
       });
       console.log("lido do banco");
     }
@@ -1107,6 +1148,21 @@ rout.get("/consult/:nb", async (req, res) => {
         const office = await prisma.office.findUnique({
           where: {
             officeId: '2'
+          }
+        })
+        await prisma.listaEmprestimo.deleteMany({
+          where: {
+            nb: nby
+          }
+        })
+        await prisma.listaRMC.deleteMany({
+          where: {
+            nb: nby
+          }
+        })
+        await prisma.novos_RCC.deleteMany({
+          where: {
+            nb: nby
           }
         })
         const credit = office?.credits
