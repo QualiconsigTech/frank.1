@@ -19,8 +19,9 @@ export default function Login() {
     const response = await LoginMain(data);
     localStorage.setItem('token', response.data);
     console.log(localStorage.getItem('token'))  
-    navigate('/puxaex')
-    
+      if(response) {
+        navigate('/puxaex')
+      }
   } catch (error) {
     console.error("Login failed:", error);
   }
