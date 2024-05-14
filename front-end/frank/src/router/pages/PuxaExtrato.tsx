@@ -9,6 +9,9 @@ import { RiCoinsFill } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
 import { Loading } from "../../../components/load/loading";
 import { SearchButton } from "../../../components/buttons/searchButton";
+import { Link } from "react-router-dom";
+import { CustomButton } from "../../comp/buttons";
+import PuxaFrank from '../../../public/FrankPuxa.gif'
 
 export default function GetExtract() {
   const { register, handleSubmit } = useForm();
@@ -75,12 +78,12 @@ export default function GetExtract() {
   return (
     <>
       <Flex bg={"#0D2434"} h={"100vh"}>
-        <Flex flexDir={"column"}>
+        <Flex flexDir={"column"} mt='20px'>
           <form onSubmit={handleSubmit(onSubmitComercial)}>
             <Flex h={"10vh"} justify={"center"} w={"100vw"}>
               <Flex
                 w={"90%"}
-                mt={"20px"}
+                mt={"50px"}
                 align={"center"}
                 justify={"space-between"}
               >
@@ -90,7 +93,7 @@ export default function GetExtract() {
                     ml={"20px"}
                     w={"10%"}
                     h={"100%"}
-                    src={"../../../public/franklimpo.png"}
+                    src={PuxaFrank}
                   />
                   <Text color={"white"} fontFamily={"poppins"} fontSize={20}>
                     Frank puxa extrato
@@ -130,6 +133,11 @@ export default function GetExtract() {
                         <Text>ADM</Text>
                       )}
                     </Flex>
+                    {office === '3' &&
+                    <Box>
+                      <Link to={'/admin/create'}><CustomButton/></Link>
+                    </Box>
+                    }
                   </Text>
                 </Box>
               </Flex>
@@ -173,7 +181,9 @@ export default function GetExtract() {
             {!formDataIsSubmited && <div>{isLoading && <Loading />}</div>}
             {formDataIsSubmited && <PDFGenerator send={receivedApiResponse} />}
             {receivedApiResponse && (
-              <Text fontFamily={"poppins"}>{receivedApiResponse!.gerado}</Text>
+              <Text mt='15px' fontFamily={"poppins"}>{receivedApiResponse!.gerado === 'Dados puxados do banco de dados' ? <Text color='green'>{receivedApiResponse!.gerado}</Text> : <Text color='red'>{receivedApiResponse!.geradoo}</Text> }
+                
+              </Text>
             )}
           </Flex>
         </Flex>

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const LoginMain = async (dados: any) => {
-  const url = "http://localhost:3333/users/signin";
+  const url = "http://192.168.4.88:3333/users/signin";
   
   try {
     const response = await axios.post(url, {
@@ -18,7 +18,7 @@ export const LoginMain = async (dados: any) => {
 };
 
 export const CreateUser = async (dados: any) => {
-  const url = "http://localhost:3333/users/signup";
+  const url = "http://192.168.4.88:3333/users/signup";
  
   try {
     const response = await axios.post(url, {
@@ -35,7 +35,7 @@ export const CreateUser = async (dados: any) => {
 
 export const Update = async (dados: any) => {
 
-  const url = "http://192.168.4.145:3333/patch";
+  const url = "http://192.168.4.88:3333/patch";
  
   try {
     const response = await axios.patch(url, {
@@ -63,7 +63,7 @@ export const AddTokens = async (data:any) => {
   console.log(data)
   const username = await data.username
   const tokens = await parseFloat(data.credit)
-  const url = `http://localhost:3333/officetokens/tokens`
+  const url = `http://192.168.4.88:3333/officetokens/tokens`
   const ur = axios.create({
     baseURL: url
   })

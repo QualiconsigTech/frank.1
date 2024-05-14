@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const Extract = async (prop:string, username:string) => {
-  const url = `http://localhost:3333/consult/consultAdm`
+  const url = `http://192.168.4.88:3333/consult/consultAdm`
   
   try {
     const response = await axios.post(url, {
@@ -16,7 +16,7 @@ export const Extract = async (prop:string, username:string) => {
 }
 
 export const ExtractFiveDays = async (prop:string, username:string) => {
-  const url = `http://localhost:3333/consult/consultConsultor`
+  const url = `http://192.168.4.88:3333/consult/consultConsultor`
   try {
     const response = await axios.post(url, {
       nb: prop,
@@ -29,7 +29,7 @@ export const ExtractFiveDays = async (prop:string, username:string) => {
 }
 
 export const GetTotalTokens = async (username:string) => {
-  const url = `http://localhost:3333/users/tok`
+  const url = `http://192.168.4.88:3333/users/tok`
   
   try {
     const response = await axios.post(url, {
