@@ -201,7 +201,7 @@ async function generatePDF(data: any) {
     startY += lineHeight * 1.5;
   });
 
-  doc.save('example.pdf');
+  doc.save(`nb ${data.dadosPessoais.nb}.pdf`);
 }
 
 function PDFGenerator({ send }: any) {

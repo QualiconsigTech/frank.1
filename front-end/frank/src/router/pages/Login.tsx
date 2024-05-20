@@ -20,7 +20,7 @@ export default function Login() {
     localStorage.setItem('token', response.data);
     console.log(localStorage.getItem('token'))  
       if(response) {
-        navigate('/puxaex')
+        navigate('/frank')
       }
   } catch (error) {
     console.error("Login failed:", error);

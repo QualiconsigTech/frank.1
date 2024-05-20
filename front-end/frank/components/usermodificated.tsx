@@ -24,7 +24,7 @@ export const UserModificated = () => {
   };
 
   return (
-    <Box bg="#353345" w={"40%"} p={10} borderRadius={"7px"}>
+    <Box  p={10} borderRadius={"7px"}>
       <form onSubmit={handleSubmit(handleModificateOffice)}>
         <Text fontWeight={"650"} mb={2} color={"#d3c22c"}>
           Alterar Cargo

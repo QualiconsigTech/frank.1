@@ -35,12 +35,47 @@ export const CreateUser = async (dados: any) => {
 
 export const Update = async (dados: any) => {
 
-  const url = "http://192.168.4.88:3333/patch";
- 
+  const url = "http://192.168.4.88:3333/users/path";
+  console.log(dados)
   try {
-    const response = await axios.patch(url, {
+    const response = await axios.post(url, {
       username: dados.username,
       officeId: dados.officeId,
+    });
+    console.log(response)
+    return response;
+  } catch(err) {
+    console.log("Usuario não pode ser alterado");
+    
+  }
+}
+
+
+export const Reset = async (dados: any) => {
+
+  const url = "http://192.168.4.88:3333/users/reset";
+  console.log(dados)
+  try {
+    const response = await axios.post(url, {
+      username: dados.username,
+      password: dados.password,
+    });
+    console.log(response)
+    return response;
+  } catch(err) {
+    console.log("Usuario não pode ser alterado");
+    
+  }
+}
+
+export const Resetuser = async (dados: any) => {
+
+  const url = "http://192.168.4.88:3333/users/resetUsername";
+  console.log(dados)
+  try {
+    const response = await axios.post(url, {
+      username: dados.username,
+      newUsername: dados.newUsername,
     });
     console.log(response)
     return response;
@@ -70,6 +105,20 @@ export const AddTokens = async (data:any) => {
   const response = await axios.post(url, {
     username: username,
     tokens: tokens
+  });
+  return response.data
+}
+
+
+export const DeleteUsery = async (data:any) => {
+  console.log(data)
+  const username = await data.username
+  const url = `http://192.168.4.88:3333/users/delete`
+  const ur = axios.create({
+    baseURL: url
+  })
+  const response = await axios.post(url, {
+      username
   });
   return response.data
 }

@@ -27,7 +27,7 @@ export const CreateUserComponent = () => {
 
   return (
    
-    <Box bg='#353345' w={'40%'} p={10} borderRadius={'7px'}>
+    <Box p={10} borderRadius={'7px'}>
       <form onSubmit={handleSubmit(handleCreateUser)}>
         <Text fontWeight={'650'} mb={2} color={'#d3c22c'}>Registro de novo usuario</Text>
         <Flex   justify={'center'} flexDir={'column'} gap={2}>

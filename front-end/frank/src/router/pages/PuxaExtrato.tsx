@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Image, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Image, Input, Text } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getInfoCredits } from "../../api/login";
 import { Extract, ExtractFiveDays, GetTotalTokens } from "../../api/consultas/index";
@@ -9,11 +9,21 @@ import { RiCoinsFill } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
 import { Loading } from "../../../components/load/loading";
 import { SearchButton } from "../../../components/buttons/searchButton";
-import { Link } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { CustomButton } from "../../comp/buttons";
 import PuxaFrank from '../../../public/FrankPuxa.gif'
+import { CiLogout } from "react-icons/ci";
 
 export default function GetExtract() {
+
+  const navigate = useNavigate(); // Usando useNavigate para redirecionamento
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    navigate('/')
+  }
+
+
   const { register, handleSubmit } = useForm();
   const [formDataIsSubmited, setFormDataSubmited] = useState(false);
   const [receivedApiResponse, setReceivedApiResponse] = useState<any>();
@@ -139,6 +149,9 @@ export default function GetExtract() {
                     </Box>
                     }
                   </Text>
+                  <Box mt={2} textAlign={'center'} cursor={'pointer'} fontWeight={'bold'} borderRadius={'4px'} onClick={handleLogout} bg={'red.400'} color={'white'}>
+                   <Icon as={CiLogout }/> Deslogar
+                  </Box>
                 </Box>
               </Flex>
             </Flex>

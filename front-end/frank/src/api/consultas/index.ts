@@ -22,7 +22,7 @@ export const ExtractFiveDays = async (prop:string, username:string) => {
       nb: prop,
       username
     })
-    return response
+    return response.data
   } catch (err) {
     return 'Não foi possivel fazer a busca'
   }

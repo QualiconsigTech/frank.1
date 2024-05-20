@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
     element: <Login/>   
   },
   {
-    path: "/puxaEx",
+    path: "/frank",
     element: <PrivateRoute element={<GetExtract />} />
   },
   {
